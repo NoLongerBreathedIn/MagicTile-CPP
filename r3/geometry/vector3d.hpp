@@ -2,15 +2,13 @@
 #define VECTOR3D_H
 #include <complex>
 #include <ostream>
+#include <cmath>
+#include <cstddef>
 
 class vector3d {
 public:
-  inline vector3d(double x, double y, double z = 0, double w = 0) {
-    this->x = x;
-    this->y = y;
-    this->z = z;
-    this->w = w;
-  }
+  inline vector3d(double x = 0, double y = 0, double z = 0, double w = 0) :
+    x(x), y(y), z(z), w(w) {}
   double x, y, z, w;
   static vector3d load(const char *s);
   inline operator std::complex<double>() const {
@@ -53,11 +51,23 @@ public:
   inline double magSquared() const {
     return(this->dot(*this));
   }
-  inline double dist(const vector3d &v) {
-    return((*this - v).abs());
-  }
+  double dist(const vector3d &v) const;
   double dot(const vector3d &v) const;
+  inline void rotate90() {
+    double t = x;
+    x = -y;
+    y = t;
+  }
+  void rotateXY(double angle);
+  void rotateAxis(vector3d axis, double angle);
+  double angleTo(const vector3d &v) const;
+  vector3d cross(const vector3d &v) const;
+  vector3d perpendicular() const;
+  vector3d proj3dsafe(double cameraDist) const;
+  vector3d centralProject(double cameraDist) const;
 };
+
+extern const vector3d DNE_VEC;
 
 inline bool operator==(const vector3d &a, const vector3d &b) {
   return(a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w);
@@ -70,14 +80,58 @@ extern std::size_t hash_value(const vector3d &v);
 
 extern std::ostream &operator<<(std::ostream &os, const vector3d &v);
 
-extern vector3d operator*(const vector3d &v, double d);
-extern vector3d operator*(double d, const vector3d &v);
-extern vector3d operator/(const vector3d &v, double d);
-extern vector3d &operator*=(vector3d &v, double d);
-extern vector3d &operator/=(vector3d &v, double d);
-extern vector3d operator+(const vector3d &v, const vector3d &w);
-extern vector3d operator-(const vector3d &v, const vector3d &w);
-extern vector3d &operator+=(vector3d &v, const vector3d &w);
-extern vector3d &operator-=(vector3d &v, const vector3d &w);
+inline vector3d &operator*=(vector3d &v, double d) {
+	v.x *= d;
+	v.y *= d;
+	v.z *= d;
+	v.w *= d;
+	return(v);
+}
+inline vector3d &operator/=(vector3d &v, double d) {
+	v.x /= d;
+	v.y /= d;
+	v.z /= d;
+	v.w /= d;
+	return(v);
+}
+inline vector3d operator*(const vector3d &v, double d) {
+	vector3d w = v;
+	return(w *= d);
+}
+inline vector3d operator*(double d, const vector3d &v) {
+	vector3d w = v;
+	return(w *= d);
+}
+inline vector3d operator/(const vector3d &v, double d) {
+	vector3d w = v;
+	return(w /= d);
+}
+
+inline vector3d &operator+=(vector3d &v, const vector3d &w) {
+	v.x += w.x;
+	v.y += w.y;
+	v.z += w.z;
+	v.w += w.w;
+	return(v);
+}
+inline vector3d &operator-=(vector3d &v, const vector3d &w) {
+  	v.x -= w.x;
+	v.y -= w.y;
+	v.z -= w.z;
+	v.w -= w.w;
+	return(v);
+}
+
+inline vector3d operator+(const vector3d &v, const vector3d &w) {
+	vector3d u = v;
+	return(u += w);
+}
+inline vector3d operator-(const vector3d &v, const vector3d &w) {
+	vector3d u = v;
+	return(u -= w);
+}
+double vector3d::dist(const vector3d &v) const {
+  return((*this - v).abs());
+}
 
 #endif
