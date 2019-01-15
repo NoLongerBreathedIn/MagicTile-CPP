@@ -1,5 +1,4 @@
 #include "golden.hpp"
-#include <boost/functional/hash.hpp>
 
 const double tau = (std::sqrt(5.0) + 1) / 2;
 
@@ -30,13 +29,6 @@ int cmp
   if(g.a > 0 || g.b > 0)
     return(MORE);
   return(SAME);
-}
-
-template<typename t>
-std::size_t hash_value(const boost::rational<t> &r) {
-  size_t s = boost::hash<t>()(r.numerator());
-  boost::hash_combine(s, r.denominator());
-  return(s);
 }
 
 std::size_t hash_value(const golden &g) {

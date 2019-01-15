@@ -2,7 +2,9 @@
 #define GOLDEN_H
 #include <boost/rational.hpp>
 #include <boost/multiprecision/cpp_int.hpp>
+#include <boost/functional/hash.hpp>
 #include "../geometry/vector3d.hpp"
+#include "utils.hpp"
 #include <cmath>
 #ifdef CPP20READY
 #include <compare>
@@ -10,8 +12,6 @@
 #include <cstddef>
 #include <ostream>
 #include <istream>
-
-typedef boost::rational<boost::multiprecision::cpp_int> fraction;
 
 extern const double tau;
 
@@ -49,9 +49,6 @@ inline bool operator==(const golden &a, const golden &b) {
 inline bool operator!=(const golden &a, const golden &b) {
   return(!(a == b));
 }
-
-template<typename t>
-extern std::size_t hash_value(const boost::rational<t> &r);
 
 extern std::size_t hash_value(const golden &g);
 extern std::ostream &operator<<(std::ostream &os, const golden &g);

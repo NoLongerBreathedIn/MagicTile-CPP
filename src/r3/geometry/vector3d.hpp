@@ -65,6 +65,10 @@ public:
   vector3d perpendicular() const;
   vector3d proj3dsafe(double cameraDist) const;
   vector3d centralProject(double cameraDist) const;
+  inline bool infinite() const {
+    return(!(std::isfinite(x) && std::isfinite(y) &&
+	     std::isfinite(z) && std::isfinite(w)));
+  }
 };
 
 extern const vector3d DNE_VEC;
